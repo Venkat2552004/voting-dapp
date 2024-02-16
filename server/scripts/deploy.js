@@ -8,7 +8,7 @@ const hre = require("hardhat");
 
 async function main() {
   const Voting = await ethers.getContractFactory("Voting");
-  const Voting_ = await Voting.deploy(["TDP", "JANASENA", "YCP", "BJP", "NOTA"], 90);
+  const Voting_ = await Voting.deploy(["TDP", "JANASENA", "YCP", "BJP", "NOTA"], 30);
   console.log("Contract address:", Voting_.address);
 }
 
