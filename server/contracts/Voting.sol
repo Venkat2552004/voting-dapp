@@ -34,21 +34,18 @@ contract Voting {
         _;
     }
 
-    function addCandidate(string memory _name) public onlyOwner {
-        candidates.push(Candidate({
-                name: _name,
-                voteCount: 0
-        }));
+    function canVote() public view returns (bool) {
+        return isVoted[msg.sender];
     }
+
 
     function vote(uint _candidateIndex) public {
         require(!isVoted[msg.sender], "You have already voted.");
-        require(_candidateIndex < candidates.length, "Invalid candidate index.");
         candidates[_candidateIndex].voteCount++;
         isVoted[msg.sender] = true;
     }
 
-    function getAllVotesOfCandiates() public view returns (Candidate[] memory){
+    function getCandiatesInfo() public view returns (Candidate[] memory){
         return candidates;
     }
 
