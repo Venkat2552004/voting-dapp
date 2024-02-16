@@ -3,14 +3,16 @@ import { ethers } from 'ethers';
 import Login from './components/Login';
 import Connected from './components/Connected';
 import Finished from './components/Finished';
+import { contractAddress, contractAbi } from '../../server/constants/constant';
 
 function App() {
   const [account, setAccount] = useState(null);
-  const [votingStatus, setVotingStatus] = useState(false);
-  const [remainingTime, setRemainingTime] = useState('');
+  const [votingStatus, setVotingStatus] = useState(true);
+  const [remainingTime, setRemainingTime] = useState('0');
   const [isConnected, setIsConnected] = useState(false);
   const [voted, setVoted] = useState(false);
   const [candidates, setCandidates] = useState([]);
+
 
   useEffect(() => {
     getCandidatesInfo();
@@ -52,16 +54,18 @@ function App() {
     const signer = provider.getSigner();
     const Contract = new ethers.Contract(contractAddress, contractAbi, signer);
     const time = await Contract.getRemainingTime();
-    setRemainingTime(time);
+    console.log(time);
+    setRemainingTime(parseInt(time, 16));
   }
 
-  async function vote() {
+  async function vote(candidateIndex) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
     const tx = await contractInstance.vote(candidateIndex);
     await tx.wait();
+    canVote();
   }
 
   async function canVote() {
@@ -107,6 +111,7 @@ function App() {
     }
   }
 
+
   return (
     <div className="App">
       {isConnected ? (
@@ -124,7 +129,7 @@ function App() {
         )
       ) : (
         <Login connectToMetamask={connectToMetamask} />
-      )}
+       )}
     </div>
   );
 }
